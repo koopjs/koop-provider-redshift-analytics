@@ -1,0 +1,24 @@
+{
+  "name": "koop-provider-redshift-analytics",
+  "version": "0.1.0",
+  "description": "An opinionated provider template for koop-cli",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "mocha 'test/**/*.test.js'",
+    "start": "koop serve"
+  },
+  "dependencies": {
+    "config": "^3.3.1"
+  },
+  "devDependencies": {
+    "@koopjs/cli": "^0.6.2",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1"
+  },
+  "repository": "",
+  "keywords": [
+    "koop",
+    "plugin",
+    "provider"
+  ]
+}
