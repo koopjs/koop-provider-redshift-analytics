@@ -1,5 +1,5 @@
 # This file loads the "config" module with values set by the ENV variables below
-koopProviderRedshiftAnalytics:
+koop-provider-redshift-analytics:
   redshift:
     host: "KOOP_REDSHIFT_HOST"
     port: "KOOP_REDSHIFT_PORT"
