@@ -44,7 +44,8 @@ SELECT
 		a_hostname = 'hub.arcgis.com' 
   	AND event_type = 'pageView'
   	AND event_timestamp >= CURRENT_DATE - INTERVAL '30 DAY'
-  	GROUP BY  DATE_TRUNC('DAY', event_timestamp );
+  	GROUP BY  DATE_TRUNC('DAY', event_timestamp )
+		ORDER BY event_timestamp;
 
 -- Time series of session counts over a range
 SELECT

@@ -8,24 +8,7 @@ const modulePath = '../../lib/model'
 
 describe('Model', function () {
   it('should reject unsupported metric parameter', async () => {
-    const withSchemaStub = sinon.stub().returnsThis();
-    const fromStub = sinon.stub().resolves([{ foo: 'bar' }]);
-    const Model = proxyquire(modulePath, {
-      'config': {
-        koopProviderRedshiftAnalytics: {
-          redshift: {
-            schema: 'redshift-schema',
-            table: 'analytics-table'
-          }
-        }
-      },
-      './knex': {
-        select: sinon.stub().returns({
-          withSchema: withSchemaStub,
-          from: fromStub
-        })
-      }
-    })
+    const Model = require(modulePath)
     const model = new Model()
     const getData = promisify(model.getData)
     try {
@@ -38,27 +21,15 @@ describe('Model', function () {
   })
 
   it('should get geojson from the getData() function', async () => {
-    const withSchemaStub = sinon.stub().returnsThis();
-    const fromStub = sinon.stub().resolves([{ foo: 'bar' }]);
+    const buildEventQueryStub = sinon.stub().resolves([{ foo: 'bar' }])
     const Model = proxyquire(modulePath, {
-      'config': {
-        koopProviderRedshiftAnalytics: {
-          redshift: {
-            schema: 'redshift-schema',
-            table: 'analytics-table'
-          }
-        }
-      },
-      './knex': {
-        select: sinon.stub().returns({
-          withSchema: withSchemaStub,
-          from: fromStub
-        })
+      './queries': {
+        buildEventQuery: buildEventQueryStub
       }
     })
     const model = new Model()
     const getData = promisify(model.getData)
-    const geojson = await getData({ params: { id: 'pageViews' } })
+    const geojson = await getData({ params: { id: 'pageViews' }, query: {} })
     expect(geojson).to.deep.equal({
       type: 'FeatureCollection',
       features: [
@@ -69,10 +40,12 @@ describe('Model', function () {
             foo: 'bar'
           }
         }
-      ]
+      ],
+      filtersApplied: {
+        where: true
+      }
     })
     expect(geojson.features).to.be.an('array')
-    expect(fromStub.calledOnce).to.equal(true)
-    expect(fromStub.firstCall.args).to.deep.equal(['analytics-table'])
+    sinon.restore()
   })
 })
