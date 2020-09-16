@@ -10,7 +10,7 @@ describe('index', function () {
       './lib/model': {}
     })
     expect(provider.type).to.equal('provider')
-    expect(provider.name).to.equal('koop-provider-redshift-analytics')
+    expect(provider.name).to.equal('redshift-analytics')
     expect(provider.hosts).to.equal(false)
     expect(provider.disableIdParam).to.equal(false)
     expect(provider).to.have.property('Model')
