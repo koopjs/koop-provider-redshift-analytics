@@ -1,0 +1,78 @@
+/* eslint-env mocha */
+const sinon = require('sinon')
+const chai = require('chai')
+const proxyquire = require('proxyquire').noCallThru()
+const expect = chai.expect
+const { promisify } = require('util')
+const modulePath = '../../lib/model'
+
+describe('Model', function () {
+  it('should reject unsupported metric parameter', async () => {
+    const withSchemaStub = sinon.stub().returnsThis();
+    const fromStub = sinon.stub().resolves([{ foo: 'bar' }]);
+    const Model = proxyquire(modulePath, {
+      'config': {
+        koopProviderRedshiftAnalytics: {
+          redshift: {
+            schema: 'redshift-schema',
+            table: 'analytics-table'
+          }
+        }
+      },
+      './knex': {
+        select: sinon.stub().returns({
+          withSchema: withSchemaStub,
+          from: fromStub
+        })
+      }
+    })
+    const model = new Model()
+    const getData = promisify(model.getData)
+    try {
+      const geojson = await getData({ params: { id: 'unsupported' } })
+      expect(geojson).to.be.undefined()
+    } catch (err) {
+      expect(err.message).to.equal('"metric" must be one of [pageViews, sessions, sessionDuration]')
+    }
+    
+  })
+
+  it('should get geojson from the getData() function', async () => {
+    const withSchemaStub = sinon.stub().returnsThis();
+    const fromStub = sinon.stub().resolves([{ foo: 'bar' }]);
+    const Model = proxyquire(modulePath, {
+      'config': {
+        koopProviderRedshiftAnalytics: {
+          redshift: {
+            schema: 'redshift-schema',
+            table: 'analytics-table'
+          }
+        }
+      },
+      './knex': {
+        select: sinon.stub().returns({
+          withSchema: withSchemaStub,
+          from: fromStub
+        })
+      }
+    })
+    const model = new Model()
+    const getData = promisify(model.getData)
+    const geojson = await getData({ params: { id: 'pageViews' } })
+    expect(geojson).to.deep.equal({
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: "Feature",
+          geometry: null,
+          properties: {
+            foo: 'bar'
+          }
+        }
+      ]
+    })
+    expect(geojson.features).to.be.an('array')
+    expect(fromStub.calledOnce).to.equal(true)
+    expect(fromStub.firstCall.args).to.deep.equal(['analytics-table'])
+  })
+})

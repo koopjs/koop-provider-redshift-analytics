@@ -1,0 +1,13 @@
+# This file loads the "config" module with values set by the ENV variables below
+koopProviderRedshiftAnalytics:
+  redshift:
+    host: "KOOP_REDSHIFT_HOST"
+    port: "KOOP_REDSHIFT_PORT"
+    user: "KOOP_REDSHIFT_USER"
+    password: "KOOP_REDSHIFT_PASSWORD"
+    database: "KOOP_REDSHIFT_DATABASE"
+    schema: "KOOP_REDSHIFT_SCHEMA"
+    table: "KOOP_REDSHIFT_TABLE"
+    eventColumn: "event_type"
+    sessionColumn: "session_id"
+    eventTimestampColumn: "event_timestamp"
