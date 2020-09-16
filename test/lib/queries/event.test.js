@@ -10,7 +10,7 @@ describe('event query builder', () => {
   it('should build a non-dimensioned event count query', () => {
     const buildEventQuery = proxyquire(modulePath, {
       'config': {
-        'koop-provider-redshift-analytics': {
+        'koopRedshiftAnalytics': {
           redshift: {
             schema: 'redshift-schema',
             table: 'analytics-table',
@@ -27,7 +27,7 @@ describe('event query builder', () => {
   it('should build a timestamp-dimensioned event count query', () => {
     const buildEventQuery = proxyquire(modulePath, {
       'config': {
-        'koop-provider-redshift-analytics': {
+        'koopRedshiftAnalytics': {
           redshift: {
             schema: 'redshift-schema',
             table: 'analytics-table',
@@ -44,7 +44,7 @@ describe('event query builder', () => {
   it('should build a non-timestamp-dimensioned event count query', () => {
     const buildEventQuery = proxyquire(modulePath, {
       'config': {
-        'koop-provider-redshift-analytics': {
+        'koopRedshiftAnalytics': {
           redshift: {
             schema: 'redshift-schema',
             table: 'analytics-table',
@@ -61,7 +61,7 @@ describe('event query builder', () => {
   it('should build a non-dimensioned event count query with addition where fragment', () => {
     const buildEventQuery = proxyquire(modulePath, {
       'config': {
-        'koop-provider-redshift-analytics': {
+        'koopRedshiftAnalytics': {
           redshift: {
             schema: 'redshift-schema',
             table: 'analytics-table',
