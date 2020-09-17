@@ -1,3 +1,4 @@
+/* eslint-env mocha */
 const chai = require('chai')
 const expect = chai.expect
 const { routeParamsSchema } = require('../../lib/schema')
