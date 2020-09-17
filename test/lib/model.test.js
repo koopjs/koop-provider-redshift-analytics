@@ -17,7 +17,6 @@ describe('Model', function () {
     } catch (err) {
       expect(err.message).to.equal('"metric" must be one of [pageViews, sessions, avgSessionDuration]')
     }
-    
   })
 
   it('should get geojson from the getData() function', async () => {
@@ -34,7 +33,7 @@ describe('Model', function () {
       type: 'FeatureCollection',
       features: [
         {
-          type: "Feature",
+          type: 'Feature',
           geometry: null,
           properties: {
             foo: 'bar'

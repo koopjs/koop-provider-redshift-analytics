@@ -15,7 +15,8 @@
     "moment": "^2.28.0",
     "moment-range": "^4.0.2",
     "pg": "^8.3.3",
-    "sinon": "^9.0.3"
+    "sinon": "^9.0.3",
+    "standard": "^14.3.4"
   },
   "devDependencies": {
     "@koopjs/cli": "^0.6.2",
