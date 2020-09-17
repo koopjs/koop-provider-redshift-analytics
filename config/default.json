@@ -1,3 +1,11 @@
 {
-  "koopRedshiftAnalytics": {}
+  "koopProviderRedshiftAnalytics": {
+    "dimensions": ["day"],
+    "timeDimensions": ["day"],
+    "metrics": ["pageViews", "sessions", "avgSessionDuration"],
+    "defaultStartDate": "INTERVAL '30 DAY'",
+    "eventLookup": {
+      "pageViews": "pageView"
+    }
+  }
 }

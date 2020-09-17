@@ -15,7 +15,7 @@ describe('Model', function () {
       const geojson = await getData({ params: { id: 'unsupported' } })
       expect(geojson).to.be.undefined()
     } catch (err) {
-      expect(err.message).to.equal('"metric" must be one of [pageViews, sessions, sessionDuration]')
+      expect(err.message).to.equal('"metric" must be one of [pageViews, sessions, avgSessionDuration]')
     }
     
   })

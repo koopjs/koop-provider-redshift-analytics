@@ -6,11 +6,11 @@ describe('schema', function () {
   describe('routeParamsSchema', function () {
     it('should reject invalid metric param', () => {
       const { error } = routeParamsSchema.validate({ id: 'unsupported' })
-      expect(error).to.have.property('message', '"metric" must be one of [pageViews, sessions, sessionDuration]')
+      expect(error).to.have.property('message', '"metric" must be one of [pageViews, sessions, avgSessionDuration]')
     })
 
     it('should allow metric params', () => {
-      ['pageViews', 'sessions', 'sessionDuration'].forEach(metric => {
+      ['pageViews', 'sessions', 'avgSessionDuration'].forEach(metric => {
         const { error, value } = routeParamsSchema.validate({ id: metric })
         expect(error).to.be.an('undefined')
         expect(value).to.deep.equal({

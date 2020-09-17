@@ -11,7 +11,7 @@ SELECT COUNT(*)
 SELECT
 	COUNT(*) AS sessions
 FROM (
-	SELECT DISTINCT(session_id)
+	SELECT COUNT(DISTINCT session_id)
 	FROM pinpoint.hub
 	WHERE
 		a_hostname = 'hub.arcgis.com'
