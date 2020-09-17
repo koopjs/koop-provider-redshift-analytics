@@ -1,6 +1,7 @@
 /* eslint-env mocha */
 const chai = require('chai')
 const proxyquire = require('proxyquire').noCallThru()
+const sinon = require('sinon')
 const expect = chai.expect
 const modulePath = '../../../lib/queries/session'
 const configStub = {
@@ -11,41 +12,56 @@ const configStub = {
       sessionColumn: 'session-column',
       eventTimestampColumn: 'timestamp-column'
     },
-    timeDimensions: ['day'],
-    defaultStartDate: 'INTERVAL \'30 DAY\''
+    timeDimensions: ['day']
   }
 }
 
 describe('session query builder', () => {
   it('should build a non-dimensioned session count query', () => {
+    const rawWhereStub = sinon.stub().returns('raw-where-clause')
     const buildSessionQuery = proxyquire(modulePath, {
-      config: configStub
+      config: configStub,
+      './helpers/raw-where': rawWhereStub
     })
     const query = buildSessionQuery()
-    expect(query.toString()).to.equal('select COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where timestamp-column >= CURRENT_DATE - INTERVAL \'30 DAY\'')
+    expect(query.toString()).to.equal('select COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where raw-where-clause')
+    expect(rawWhereStub.calledOnce).to.equal(true)
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: undefined, startDate: undefined, where: undefined }])
   })
 
   it('should build a timestamp-dimensioned session count query', () => {
+    const rawWhereStub = sinon.stub().returns('raw-where-clause')
     const buildSessionQuery = proxyquire(modulePath, {
-      config: configStub
+      config: configStub,
+      './helpers/raw-where': rawWhereStub
     })
     const query = buildSessionQuery({ dimension: 'day' })
-    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', event_timestamp ) AS timestamp, COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where timestamp-column >= CURRENT_DATE - INTERVAL \'30 DAY\' group by DATE_TRUNC(\'day\', event_timestamp ) order by DATE_TRUNC(\'day\', event_timestamp )')
+    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', event_timestamp ) AS timestamp, COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where raw-where-clause group by DATE_TRUNC(\'day\', event_timestamp ) order by DATE_TRUNC(\'day\', event_timestamp )')
+    expect(rawWhereStub.calledOnce).to.equal(true)
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: undefined, startDate: undefined, where: undefined }])
   })
 
   it('should build a non-timestamp-dimensioned session count query', () => {
+    const rawWhereStub = sinon.stub().returns('raw-where-clause')
     const buildSessionQuery = proxyquire(modulePath, {
-      config: configStub
+      config: configStub,
+      './helpers/raw-where': rawWhereStub
     })
     const query = buildSessionQuery({ dimension: 'a_label' })
-    expect(query.toString()).to.equal('select "a_label", COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where timestamp-column >= CURRENT_DATE - INTERVAL \'30 DAY\' group by "a_label"')
+    expect(query.toString()).to.equal('select "a_label", COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where raw-where-clause group by "a_label"')
+    expect(rawWhereStub.calledOnce).to.equal(true)
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: undefined, startDate: undefined, where: undefined }])
   })
 
   it('should build a non-dimensioned session count query with addition where fragment', () => {
+    const rawWhereStub = sinon.stub().returns('raw-where-clause')
     const buildSessionQuery = proxyquire(modulePath, {
-      config: configStub
+      config: configStub,
+      './helpers/raw-where': rawWhereStub
     })
-    const query = buildSessionQuery({ where: 'x=\'y\'' })
-    expect(query.toString()).to.equal('select COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where timestamp-column >= CURRENT_DATE - INTERVAL \'30 DAY\' AND x=\'y\'')
+    const query = buildSessionQuery({ startDate: 'START', endDate: 'END', where: 'x=\'y\'' })
+    expect(query.toString()).to.equal('select COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where raw-where-clause')
+    expect(rawWhereStub.calledOnce).to.equal(true)
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: 'x=\'y\'' }])
   })
 })
