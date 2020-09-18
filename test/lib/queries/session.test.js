@@ -36,7 +36,7 @@ describe('session query builder', () => {
       './helpers/raw-where': rawWhereStub
     })
     const query = buildSessionQuery({ dimension: 'day' })
-    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', event_timestamp ) AS timestamp, COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where raw-where-clause group by DATE_TRUNC(\'day\', event_timestamp ) order by DATE_TRUNC(\'day\', event_timestamp )')
+    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', timestamp-column ) AS timestamp, COUNT(DISTINCT session-column) AS sessions from "redshift-schema"."analytics-table" where raw-where-clause group by DATE_TRUNC(\'day\', timestamp-column ) order by DATE_TRUNC(\'day\', timestamp-column )')
     expect(rawWhereStub.calledOnce).to.equal(true)
     expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: undefined, startDate: undefined, where: undefined }])
   })
