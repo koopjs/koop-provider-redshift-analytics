@@ -13,7 +13,6 @@ const configStub = {
       eventTimestampColumn: 'timestamp-column'
     },
     timeDimensions: ['day'],
-    defaultStartDate: 'INTERVAL \'30 DAY\'',
     eventLookup: {
       pageViews: 'pageView'
     }

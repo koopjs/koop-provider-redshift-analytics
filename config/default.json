@@ -3,7 +3,10 @@
     "dimensions": ["day"],
     "timeDimensions": ["day"],
     "metrics": ["pageViews", "sessions", "avgSessionDuration"],
-    "defaultStartDate": "INTERVAL '30 DAY'",
+    "defaultTimeRangeStart": {
+      "interval": "day",
+      "count": "30"
+    },
     "eventLookup": {
       "pageViews": "pageView"
     }
