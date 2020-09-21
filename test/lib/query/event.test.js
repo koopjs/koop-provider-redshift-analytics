@@ -3,7 +3,7 @@ const chai = require('chai')
 const proxyquire = require('proxyquire')
 const sinon = require('sinon')
 const expect = chai.expect
-const modulePath = '../../../lib/queries/event'
+const modulePath = '../../../lib/query/event'
 const configStub = {
   koopProviderRedshiftAnalytics: {
     redshift: {
