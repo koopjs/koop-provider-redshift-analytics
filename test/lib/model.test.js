@@ -22,7 +22,7 @@ describe('Model', function () {
   it('should get geojson from the getData() function', async () => {
     const buildEventQueryStub = sinon.stub().resolves([{ foo: 'bar' }])
     const Model = proxyquire(modulePath, {
-      './queries': buildEventQueryStub
+      './query': buildEventQueryStub
     })
     const model = new Model()
     const getData = promisify(model.getData)

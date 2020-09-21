@@ -2,7 +2,7 @@
 const chai = require('chai')
 const expect = chai.expect
 const proxyquire = require('proxyquire').noCallThru()
-const buildRawWhere = proxyquire('../../../../lib/queries/helpers/raw-where', {
+const buildRawWhere = proxyquire('../../../../lib/query/helpers/raw-where', {
   config: {
     koopProviderRedshiftAnalytics: {
       redshift: {

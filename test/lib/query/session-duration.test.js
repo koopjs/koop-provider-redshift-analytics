@@ -3,7 +3,7 @@ const chai = require('chai')
 const proxyquire = require('proxyquire').noCallThru()
 const sinon = require('sinon')
 const expect = chai.expect
-const modulePath = '../../../lib/queries/session-duration'
+const modulePath = '../../../lib/query/session-duration'
 const configStub = {
   koopProviderRedshiftAnalytics: {
     redshift: {
