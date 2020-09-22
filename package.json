@@ -16,6 +16,7 @@
     "moment-range": "^4.0.2",
     "pg": "^8.3.3",
     "sinon": "^9.0.3",
+    "sqlstring": "^2.3.2",
     "standard": "^14.3.4"
   },
   "devDependencies": {
