@@ -5,7 +5,7 @@
   "main": "src/index.js",
   "scripts": {
     "test": "standard && mocha 'test/**/*.test.js'",
-    "start": "node server.js"
+    "start": "koop serve"
   },
   "dependencies": {
     "config": "^3.3.1",
