@@ -1,7 +1,7 @@
 /* eslint-env mocha */
 const chai = require('chai')
 const expect = chai.expect
-const createCompleteTimeseries = require('../../lib/create-complete-timeseries')
+const createCompleteTimeseries = require('../../../lib/db/create-complete-timeseries')
 const data = [
   {
     metric: 80,
