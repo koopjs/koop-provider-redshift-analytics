@@ -7,10 +7,14 @@ const modulePath = '../../../lib/query/session-duration'
 const configStub = {
   koopProviderRedshiftAnalytics: {
     redshift: {
-      schema: 'redshift-schema',
-      table: 'analytics-table',
-      sessionColumn: 'session-column',
-      timestampColumn: 'timestamp-column'
+      sources: {
+        session: {
+          schema: 'redshift-schema',
+          table: 'analytics-table',
+          sessionColumn: 'session-column',
+          timestampColumn: 'timestamp-column'
+        }
+      }
     },
     timeDimensions: ['day']
   }
@@ -26,7 +30,7 @@ describe('session-duration query builder', () => {
     const query = buildSessionDurationQuery({ time: { startDate: 'START', endDate: 'END' } })
     expect(query.toString()).to.equal('select avg("session_duration") as "avg_session_duration" from (select "session-column", (CASE WHEN COUNT(*) > 1 THEN CAST(DATEDIFF(second, MIN(timestamp-column), MAX(timestamp-column)) AS FLOAT) END) AS session_duration, max("timestamp-column") as "session_end" from "redshift-schema"."analytics-table" where raw-where-clause group by "session-column")')
     expect(rawWhereStub.calledOnce).to.equal(true)
-    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: undefined }])
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: undefined, timestampColumn: 'timestamp-column' }])
   })
 
   it('should build a timestamp-dimensioned session duration query', () => {
@@ -38,7 +42,7 @@ describe('session-duration query builder', () => {
     const query = buildSessionDurationQuery({ dimension: 'day', time: { startDate: 'START', endDate: 'END' } })
     expect(query.toString()).to.equal('select avg("session_duration") as "avg_session_duration", DATE_TRUNC(\'day\', session_end ) AS timestamp from (select "session-column", (CASE WHEN COUNT(*) > 1 THEN CAST(DATEDIFF(second, MIN(timestamp-column), MAX(timestamp-column)) AS FLOAT) END) AS session_duration, max("timestamp-column") as "session_end" from "redshift-schema"."analytics-table" where raw-where-clause group by "session-column") group by DATE_TRUNC(\'day\', session_end)')
     expect(rawWhereStub.calledOnce).to.equal(true)
-    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: undefined }])
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: undefined, timestampColumn: 'timestamp-column' }])
   })
 
   it('should build a non-timestamp-dimensioned session duration query', () => {
@@ -50,7 +54,7 @@ describe('session-duration query builder', () => {
     const query = buildSessionDurationQuery({ dimension: 'a_hostname', time: { startDate: 'START', endDate: 'END' } })
     expect(query.toString()).to.equal('select avg("session_duration") as "avg_session_duration", "a_hostname" from (select "a_hostname", "session-column", (CASE WHEN COUNT(*) > 1 THEN CAST(DATEDIFF(second, MIN(timestamp-column), MAX(timestamp-column)) AS FLOAT) END) AS session_duration, max("timestamp-column") as "session_end" from "redshift-schema"."analytics-table" where raw-where-clause group by "a_hostname", "session-column") group by "a_hostname"')
     expect(rawWhereStub.calledOnce).to.equal(true)
-    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: undefined }])
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: undefined, timestampColumn: 'timestamp-column' }])
   })
 
   it('should build a non-dimensioned session count query with addition where fragment', () => {
@@ -62,6 +66,6 @@ describe('session-duration query builder', () => {
     const query = buildSessionDurationQuery({ time: { startDate: 'START', endDate: 'END' }, where: 'x=\'y\'' })
     expect(query.toString()).to.equal('select avg("session_duration") as "avg_session_duration" from (select "session-column", (CASE WHEN COUNT(*) > 1 THEN CAST(DATEDIFF(second, MIN(timestamp-column), MAX(timestamp-column)) AS FLOAT) END) AS session_duration, max("timestamp-column") as "session_end" from "redshift-schema"."analytics-table" where raw-where-clause group by "session-column")')
     expect(rawWhereStub.calledOnce).to.equal(true)
-    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: 'x=\'y\'' }])
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ startDate: 'START', endDate: 'END', where: 'x=\'y\'', timestampColumn: 'timestamp-column' }])
   })
 })
