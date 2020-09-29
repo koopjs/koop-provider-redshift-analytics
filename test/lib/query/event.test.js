@@ -10,7 +10,7 @@ const configStub = {
       schema: 'redshift-schema',
       table: 'analytics-table',
       eventColumn: 'event-column',
-      eventTimestampColumn: 'timestamp-column'
+      timestampColumn: 'timestamp-column'
     },
     timeDimensions: ['day'],
     eventLookup: {
