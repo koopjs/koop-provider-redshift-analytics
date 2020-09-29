@@ -39,7 +39,7 @@ describe('event query builder', () => {
       './helpers/raw-where': rawWhereStub
     })
     const query = buildEventQuery({ metric: 'pageViews', dimension: 'day', time: { startDate: 'START', endDate: 'END' } })
-    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', event_timestamp ) AS timestamp, count("event-column") as "page_views" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause group by DATE_TRUNC(\'day\', event_timestamp ) order by DATE_TRUNC(\'day\', event_timestamp )')
+    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', timestamp-column ) AS timestamp, count("event-column") as "page_views" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause group by DATE_TRUNC(\'day\', timestamp-column ) order by DATE_TRUNC(\'day\', timestamp-column )')
     expect(rawWhereStub.calledOnce).to.equal(true)
     expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: 'END', startDate: 'START', where: undefined }])
   })
