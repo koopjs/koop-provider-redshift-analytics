@@ -21,7 +21,7 @@
           "timestampColumn": "KOOP_REDSHIFT_COLUMN_EVENT_TIMESTAMP"
         },
         "session": {
-          "schema": "KOOP_REDSHIFT_SCHEMA",
+          "schema": "KOOP_REDSHIFT_SCHEMA_SESSION",
           "table": "KOOP_REDSHIFT_TABLE_SESSION",
           "sessionColumn": "KOOP_REDSHIFT_COLUMN_SESSION",
           "timestampColumn": "KOOP_REDSHIFT_COLUMN_SESSION_TIMESTAMP"
