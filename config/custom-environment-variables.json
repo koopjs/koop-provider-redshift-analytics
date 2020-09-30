@@ -18,19 +18,13 @@
           "schema": "KOOP_REDSHIFT_SCHEMA_EVENT",
           "table": "KOOP_REDSHIFT_TABLE_EVENT",
           "eventColumn": "KOOP_REDSHIFT_COLUMN_EVENT",
-          "timestampColumn": "KOOP_REDSHIFT_COLUMN_EVENT_TIMESTAMP",
-          "last30days": "KOOP_REDSHIFT_TABLE_EVENT_30",
-          "last90days": "KOOP_REDSHIFT_TABLE_EVENT_90", 
-          "last365days": "KOOP_REDSHIFT_TABLE_EVENT_365"
+          "timestampColumn": "KOOP_REDSHIFT_COLUMN_EVENT_TIMESTAMP"
         },
         "session": {
           "schema": "",
           "table": "KOOP_REDSHIFT_TABLE_SESSION",
           "sessionColumn": "KOOP_REDSHIFT_COLUMN_SESSION",
-          "timestampColumn": "KOOP_REDSHIFT_COLUMN_SESSION_TIMESTAMP",
-          "last30days": "KOOP_REDSHIFT_TABLE_SESSION_30",
-          "last90days": "KOOP_REDSHIFT_TABLE_SESSION_90", 
-          "last365days": "KOOP_REDSHIFT_TABLE_SESSION_365"
+          "timestampColumn": "KOOP_REDSHIFT_COLUMN_SESSION_TIMESTAMP"
         }
       }
     }

@@ -1,6 +1,6 @@
 {
   "koopProviderRedshiftAnalytics": {
-    "dimensions": ["day"],
+    "dimensions": ["day", "a_hostname"],
     "timeDimensions": ["day"],
     "metrics": ["pageViews", "sessions", "avgSessionDuration"],
     "defaultTimeRangeStart": {
