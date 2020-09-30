@@ -9,33 +9,6 @@
     },
     "eventLookup": {
       "pageViews": "pageView"
-    },
-"sources": {
-  "defaultSource": {
-    "schema": "",
-    "table": "",
-    "metricColumn": "",
-    "sessionColumn": "",
-    "timestampColumn": ""
-  },
-  "event": {
-    "schema": "",
-    "table": "",
-    "metricColumn": "",
-    "timestampColumn": "",
-    "last30days": "",
-    "last90days": "", 
-    "last365days": ""
-  },
-  "session": {
-    "schema": "",
-    "table": "",
-    "metricColumn": "",
-    "timestampColumn": "",
-    "last30days": "",
-    "last90days": "", 
-    "last365days": ""
-  }
-} 
+    }
   }
 }
