@@ -10,7 +10,7 @@ const configStub = {
       schema: 'redshift-schema',
       table: 'analytics-table',
       eventColumn: 'event-column',
-      eventTimestampColumn: 'timestamp-column'
+      timestampColumn: 'timestamp-column'
     },
     timeDimensions: ['day'],
     eventLookup: {
@@ -26,10 +26,10 @@ describe('event query builder', () => {
       config: configStub,
       './helpers/raw-where': rawWhereStub
     })
-    const query = buildEventQuery({ metric: 'pageViews' })
-    expect(query.toString()).to.equal('select count("event-column") as "pageViews" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause')
+    const query = buildEventQuery({ metric: 'pageViews', time: { startDate: 'START', endDate: 'END' } })
+    expect(query.toString()).to.equal('select count("event-column") as "page_views" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause')
     expect(rawWhereStub.calledOnce).to.equal(true)
-    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: undefined, startDate: undefined, where: undefined }])
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: 'END', startDate: 'START', where: undefined }])
   })
 
   it('should build a timestamp-dimensioned event count query', () => {
@@ -38,10 +38,10 @@ describe('event query builder', () => {
       config: configStub,
       './helpers/raw-where': rawWhereStub
     })
-    const query = buildEventQuery({ metric: 'pageViews', dimension: 'day' })
-    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', event_timestamp ) AS timestamp, count("event-column") as "pageViews" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause group by DATE_TRUNC(\'day\', event_timestamp ) order by DATE_TRUNC(\'day\', event_timestamp )')
+    const query = buildEventQuery({ metric: 'pageViews', dimension: 'day', time: { startDate: 'START', endDate: 'END' } })
+    expect(query.toString()).to.equal('select DATE_TRUNC(\'day\', timestamp-column ) AS timestamp, count("event-column") as "page_views" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause group by DATE_TRUNC(\'day\', timestamp-column ) order by DATE_TRUNC(\'day\', timestamp-column )')
     expect(rawWhereStub.calledOnce).to.equal(true)
-    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: undefined, startDate: undefined, where: undefined }])
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: 'END', startDate: 'START', where: undefined }])
   })
 
   it('should build a non-timestamp-dimensioned event count query', () => {
@@ -50,10 +50,10 @@ describe('event query builder', () => {
       config: configStub,
       './helpers/raw-where': rawWhereStub
     })
-    const query = buildEventQuery({ metric: 'pageViews', dimension: 'a_label' })
-    expect(query.toString()).to.equal('select "a_label", count("event-column") as "pageViews" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause group by "a_label"')
+    const query = buildEventQuery({ metric: 'pageViews', dimension: 'a_label', time: { startDate: 'START', endDate: 'END' } })
+    expect(query.toString()).to.equal('select "a_label", count("event-column") as "page_views" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause group by "a_label"')
     expect(rawWhereStub.calledOnce).to.equal(true)
-    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: undefined, startDate: undefined, where: undefined }])
+    expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: 'END', startDate: 'START', where: undefined }])
   })
 
   it('should build a non-dimensioned event count query with additional where fragment', () => {
@@ -62,8 +62,8 @@ describe('event query builder', () => {
       config: configStub,
       './helpers/raw-where': rawWhereStub
     })
-    const query = buildEventQuery({ metric: 'pageViews', startDate: 'START', endDate: 'END', where: 'x=\'y\'' })
-    expect(query.toString()).to.equal('select count("event-column") as "pageViews" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause')
+    const query = buildEventQuery({ metric: 'pageViews', time: { startDate: 'START', endDate: 'END' }, where: 'x=\'y\'' })
+    expect(query.toString()).to.equal('select count("event-column") as "page_views" from "redshift-schema"."analytics-table" where "event-column" = \'pageView\' and raw-where-clause')
     expect(rawWhereStub.calledOnce).to.equal(true)
     expect(rawWhereStub.firstCall.args).to.deep.equal([{ endDate: 'END', startDate: 'START', where: 'x=\'y\'' }])
   })
