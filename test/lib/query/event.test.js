@@ -3,26 +3,24 @@ const chai = require('chai')
 const proxyquire = require('proxyquire')
 const expect = chai.expect
 const modulePath = '../../../lib/query/event'
-const buildEventQuery = proxyquire(modulePath, {
-  config: {
-    koopProviderRedshiftAnalytics: {
-      redshift: {
-        sources: {
-          event: {
-            schema: 'redshift-schema',
-            table: 'analytics-table',
-            eventColumn: 'event-column',
-            timestampColumn: 'timestamp-column'
-          }
+const configStub = {
+  koopProviderRedshiftAnalytics: {
+    redshift: {
+      sources: {
+        event: {
+          schema: 'redshift-schema',
+          table: 'analytics-table',
+          eventColumn: 'event-column',
+          timestampColumn: 'timestamp-column'
         }
-      },
-      timeDimensions: ['day'],
-      eventLookup: {
-        pageViews: 'pageView'
       }
+    },
+    timeDimensions: ['day'],
+    eventLookup: {
+      pageViews: 'pageView'
     }
   }
-})
+}
 
 describe('event query builder', () => {
   it('should build a non-dimensioned event count query', () => {
