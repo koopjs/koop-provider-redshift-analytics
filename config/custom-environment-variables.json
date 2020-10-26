@@ -12,7 +12,7 @@
           "table": "KOOP_REDSHIFT_TABLE",
           "eventColumn": "KOOP_REDSHIFT_COLUMN_EVENT",
           "sessionColumn": "KOOP_REDSHIFT_COLUMN_SESSION",
-          "timestampColumn": "KOOP_REDSHIFT_COLUMN_TIMESTAMP"
+          "timestampColumn": "KOOP_REDSHIFT_COLUMN_EVENT_TIMESTAMP"
         },
         "event": {
           "schema": "KOOP_REDSHIFT_SCHEMA_EVENT",
@@ -24,6 +24,7 @@
           "schema": "KOOP_REDSHIFT_SCHEMA_SESSION",
           "table": "KOOP_REDSHIFT_TABLE_SESSION",
           "sessionColumn": "KOOP_REDSHIFT_COLUMN_SESSION",
+          "sessionDurationColumn": "KOOP_REDSHIFT_COLUMN_SESSION_DURATION",
           "timestampColumn": "KOOP_REDSHIFT_COLUMN_SESSION_TIMESTAMP"
         }
       }

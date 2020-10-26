@@ -7,8 +7,9 @@ const iso8601Regex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
 const configStub = {
   'config': { // eslint-disable-line
     koopProviderRedshiftAnalytics: {
-      metrics: ['pageViews'],
+      metrics: ['sessions', 'avgSessionDuration', 'pageViews'],
       dimensions: ['day', 'userType'],
+      sessionDimensions: ['day', 'hostname'],
       timeDimensions: ['day']
     }
   }
@@ -53,6 +54,36 @@ describe('schema', function () {
     expect(value.timeDimension).to.equal('day')
     expect(value.nonTimeDimensions).to.deep.equal(['userType'])
     expect(value).to.have.property('metric', 'pageViews')
+  })
+
+  it('should validate delimited session-metric dimensions param', () => {
+    const { error, value } = paramsSchema.validate({ id: 'sessions:day,hostname' })
+    expect(error).to.be.an('undefined')
+    expect(value).to.have.property('dimensions')
+    expect(value.dimensions).to.deep.equal(['day', 'hostname'])
+    expect(value.timeDimension).to.equal('day')
+    expect(value.nonTimeDimensions).to.deep.equal(['hostname'])
+    expect(value).to.have.property('metric', 'sessions')
+  })
+
+  it('should reject delimited session-metric dimensions param', () => {
+    const { error } = paramsSchema.validate({ id: 'sessions:day,action' })
+    expect(error).to.have.property('message', '"dimensions[1]" must be one of [day, hostname]')
+  })
+
+  it('should validate delimited session-duration-metric dimensions param', () => {
+    const { error, value } = paramsSchema.validate({ id: 'avgSessionDuration:day,hostname' })
+    expect(error).to.be.an('undefined')
+    expect(value).to.have.property('dimensions')
+    expect(value.dimensions).to.deep.equal(['day', 'hostname'])
+    expect(value.timeDimension).to.equal('day')
+    expect(value.nonTimeDimensions).to.deep.equal(['hostname'])
+    expect(value).to.have.property('metric', 'avgSessionDuration')
+  })
+
+  it('should reject delimited session-duration-metric dimensions param', () => {
+    const { error } = paramsSchema.validate({ id: 'avgSessionDuration:day,action' })
+    expect(error).to.have.property('message', '"dimensions[1]" must be one of [day, hostname]')
   })
 
   it('should validate delimited dimensions param with transposeAndAggregate option', () => {
