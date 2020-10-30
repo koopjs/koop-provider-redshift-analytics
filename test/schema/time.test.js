@@ -83,6 +83,16 @@ describe('timeValidation', () => {
     expect(getDayRange(result.startDate, result.endDate)).to.equal(30)
   })
 
+  it('should coerce "null,<ISO date>" to default ISO8601 time range', () => {
+    const end = Date.now()
+    const { value: result } = coerceTime(`null,${(new Date(end)).toISOString()}`)
+    expect(result).to.have.property('startDate')
+    expect(iso8601Regex.test(result.startDate)).to.equal(true)
+    expect(result).to.have.property('endDate')
+    expect(iso8601Regex.test(result.endDate)).to.equal(true)
+    expect(getDayRange(result.startDate, result.endDate)).to.equal(30)
+  })
+
   it('should coerce "<YYYY-MM-DD>,<YYYY-MM-DD>" to default ISO8601 time range', () => {
     const { value: result } = coerceTime('2020-04-01,2020-05-01')
     expect(result).to.have.property('startDate')
