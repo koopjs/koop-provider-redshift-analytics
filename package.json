@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "config": "^3.3.1",
+    "flora-sql-parser": "^0.9.4",
     "joi": "^17.2.1",
     "knex": "^0.21.5",
     "lodash": "^4.17.20",
@@ -16,7 +17,6 @@
     "moment-range": "^4.0.2",
     "pg": "^8.3.3",
     "sinon": "^9.0.3",
-    "sqlstring": "^2.3.2",
     "standard": "^14.3.4"
   },
   "devDependencies": {
