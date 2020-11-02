@@ -12,27 +12,18 @@ function getDayRange (start, end) {
 
 describe('timeValidation', () => {
   it('should reject invalid range: "null"', () => {
-    coerceTime('null', {
-      message: (msg) => {
-        expect(msg).to.equal('"time" param must be a comma delimited string: "<start>,<end>". Use "null", an ISO Date srting, YYYY-MM-DD string, or a unix timestamp')
-      }
-    })
+    const { errors: [error] } = coerceTime('null')
+    expect(error).to.have.property('message', '"time" param must be a comma delimited string: "<start>,<end>". Use "null", an ISO Date srting, YYYY-MM-DD string, or a unix timestamp')
   })
 
   it('should reject invalid range: "2020-01-01"', () => {
-    coerceTime('2020-01-01', {
-      message: (msg) => {
-        expect(msg).to.equal('"time" param must be a comma delimited string: "<start>,<end>". Use "null", an ISO Date srting, YYYY-MM-DD string, or a unix timestamp')
-      }
-    })
+    const { errors: [error] } = coerceTime('2020-01-01')
+    expect(error).to.have.property('message', '"time" param must be a comma delimited string: "<start>,<end>". Use "null", an ISO Date srting, YYYY-MM-DD string, or a unix timestamp')
   })
 
   it('should reject invalid range: "hello,world"', () => {
-    coerceTime('hello,world', {
-      message: (msg) => {
-        expect(msg).to.equal('"time" param must be a comma delimited string: "<start>,<end>". Use "null", an ISO Date srting, YYYY-MM-DD string, or a unix timestamp')
-      }
-    })
+    const { errors: [error] } = coerceTime('hello,world')
+    expect(error).to.have.property('message', '"time" param must be a comma delimited string: "<start>,<end>". Use "null", an ISO Date srting, YYYY-MM-DD string, or a unix timestamp')
   })
 
   it('should coerce "null,null" to default ISO8601 time range', () => {
