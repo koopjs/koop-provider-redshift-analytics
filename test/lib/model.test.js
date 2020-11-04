@@ -8,25 +8,40 @@ const modulePath = '../../lib/model'
 
 describe('Model', function () {
   it('should reject unsupported metric parameter', async () => {
-    const Model = require(modulePath)
+    const Model = proxyquire(modulePath, {
+      './schema': {
+        paramsSchema: {
+          validate: () => {
+            return { error: new Error('unsupported metric') }
+          }
+        }
+      }
+    })
     const model = new Model()
     const getData = promisify(model.getData)
     try {
       const geojson = await getData({ params: { id: 'unsupported' } })
       expect(geojson).to.be.undefined()
     } catch (err) {
-      expect(err.message).to.equal('"metric" must be one of [pageViews, sessions, avgSessionDuration]')
+      expect(err.message).to.equal('unsupported metric')
     }
   })
 
   it('should get geojson from the getData() function', async () => {
     const buildEventQueryStub = sinon.stub().resolves([{ foo: 'bar' }])
     const Model = proxyquire(modulePath, {
-      './query': buildEventQueryStub
+      './query': buildEventQueryStub,
+      './schema': {
+        paramsSchema: {
+          validate: () => {
+            return { value: { foo: 'bar' } }
+          }
+        }
+      }
     })
     const model = new Model()
     const getData = promisify(model.getData)
-    const geojson = await getData({ params: { id: 'pageViews' }, query: {} })
+    const geojson = await getData({ params: { id: 'views' }, query: {} })
     expect(geojson).to.deep.equal({
       type: 'FeatureCollection',
       features: [

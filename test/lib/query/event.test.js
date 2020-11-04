@@ -16,7 +16,7 @@ const configStub = {
       }
     },
     timeDimensions: ['day'],
-    eventLookup: {
+    metricLookup: {
       pageViews: 'pageView'
     }
   }
