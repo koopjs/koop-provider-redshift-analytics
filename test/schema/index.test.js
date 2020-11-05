@@ -1,104 +1,154 @@
 /* eslint-env mocha */
 const chai = require('chai')
 const expect = chai.expect
-const proxyquire = require('proxyquire')
+const sinon = require('sinon')
+const proxyquire = require('proxyquire').noCallThru()
 const modulePath = '../../lib/schema'
-const iso8601Regex = /\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z/
-const configStub = {
-  'config': { // eslint-disable-line
-    koopProviderRedshiftAnalytics: {
-      metrics: ['sessions', 'avgSessionDuration', 'pageViews'],
-      dimensions: ['day', 'userType'],
-      sessionDimensions: ['day', 'hostname'],
-      timeDimensions: ['day']
+
+function makeStubSpies () {
+  const metricSpy = sinon.spy(function (value) {
+    return { value }
+  })
+
+  const dimensionsSpy = sinon.spy(function (value) {
+    return { value }
+  })
+
+  const timeSpy = sinon.spy(function (value) {
+    return { value: { retVal: value } }
+  })
+
+  const whereSpy = sinon.spy(function (value) {
+    return { value }
+  })
+
+  const configStub = {
+    './metric': {
+      type: 'metric',
+      coerce: metricSpy
+    },
+    './dimensions': {
+      type: 'dimensions',
+      prepare: dimensionsSpy
+    },
+    './where': {
+      type: 'where',
+      prepare: whereSpy
+    },
+    './time': {
+      type: 'time',
+      coerce: timeSpy
     }
   }
+
+  return {
+    configStub,
+    metricSpy,
+    dimensionsSpy,
+    whereSpy,
+    timeSpy
+  }
 }
-const { paramsSchema } = proxyquire(modulePath, configStub)
 
 describe('schema', function () {
-  it('should reject invalid metric param', () => {
-    const { error } = paramsSchema.validate({ id: 'unsupported' })
-    expect(typeof error).to.equal('object')
-  })
-
   it('should validate metric-only id param', () => {
-    const { error, value } = paramsSchema.validate({ id: 'pageViews' })
+    const {
+      configStub,
+      metricSpy,
+      timeSpy
+    } = makeStubSpies()
+    const { paramsSchema } = proxyquire(modulePath, configStub)
+    const { error, value } = paramsSchema.validate({ id: 'views' })
     expect(error).to.be.an('undefined')
-    expect(value).to.have.property('metric', 'pageViews')
-    expect(value).to.have.property('where', undefined)
-    expect(value).to.have.property('startDate')
-    expect(iso8601Regex.test(value.startDate)).to.equal(true)
-    expect(value).to.have.property('endDate')
-    expect(iso8601Regex.test(value.endDate)).to.equal(true)
-  })
-
-  it('should reject invalid dimensions param', () => {
-    const { error } = paramsSchema.validate({ id: 'pageViews:unsupported' })
-    expect(typeof error).to.equal('object')
+    expect(metricSpy).to.have.property('calledOnce', true)
+    expect(timeSpy).to.have.property('calledOnce', true)
+    expect(value).to.have.property('metric', 'views')
   })
 
   it('should validate simple dimensions param', () => {
-    const { error, value } = paramsSchema.validate({ id: 'pageViews:day' })
+    const {
+      configStub,
+      metricSpy,
+      dimensionsSpy,
+      timeSpy
+    } = makeStubSpies()
+    const { paramsSchema } = proxyquire(modulePath, configStub)
+    const { error, value } = paramsSchema.validate({ id: 'views:day' })
     expect(error).to.be.an('undefined')
+    expect(metricSpy).to.have.property('calledOnce', true)
+    expect(timeSpy).to.have.property('calledOnce', true)
+    expect(dimensionsSpy).to.have.property('calledOnce', true)
+    expect(value).to.have.property('metric', 'views')
     expect(value).to.have.property('dimensions')
     expect(value.dimensions).to.deep.equal(['day'])
-    expect(value).to.have.property('metric', 'pageViews')
   })
 
   it('should validate delimited dimensions param', () => {
-    const { error, value } = paramsSchema.validate({ id: 'pageViews:day,userType' })
+    const {
+      configStub,
+      metricSpy,
+      dimensionsSpy,
+      timeSpy
+    } = makeStubSpies()
+    const { paramsSchema } = proxyquire(modulePath, configStub)
+    const { error, value } = paramsSchema.validate({ id: 'views:day,userType' })
     expect(error).to.be.an('undefined')
+    expect(metricSpy).to.have.property('calledOnce', true)
+    expect(timeSpy).to.have.property('calledOnce', true)
+    expect(dimensionsSpy).to.have.property('calledOnce', true)
+    expect(value).to.have.property('metric', 'views')
     expect(value).to.have.property('dimensions')
     expect(value.dimensions).to.deep.equal(['day', 'userType'])
-    expect(value.timeDimension).to.equal('day')
-    expect(value.nonTimeDimensions).to.deep.equal(['userType'])
-    expect(value).to.have.property('metric', 'pageViews')
-  })
-
-  it('should validate delimited session-metric dimensions param', () => {
-    const { error, value } = paramsSchema.validate({ id: 'sessions:day,hostname' })
-    expect(error).to.be.an('undefined')
-    expect(value).to.have.property('dimensions')
-    expect(value.dimensions).to.deep.equal(['day', 'hostname'])
-    expect(value.timeDimension).to.equal('day')
-    expect(value.nonTimeDimensions).to.deep.equal(['hostname'])
-    expect(value).to.have.property('metric', 'sessions')
-  })
-
-  it('should reject delimited session-metric dimensions param', () => {
-    const { error } = paramsSchema.validate({ id: 'sessions:day,action' })
-    expect(error).to.have.property('message', '"dimensions[1]" must be one of [day, hostname]')
-  })
-
-  it('should validate delimited session-duration-metric dimensions param', () => {
-    const { error, value } = paramsSchema.validate({ id: 'avgSessionDuration:day,hostname' })
-    expect(error).to.be.an('undefined')
-    expect(value).to.have.property('dimensions')
-    expect(value.dimensions).to.deep.equal(['day', 'hostname'])
-    expect(value.timeDimension).to.equal('day')
-    expect(value.nonTimeDimensions).to.deep.equal(['hostname'])
-    expect(value).to.have.property('metric', 'avgSessionDuration')
-  })
-
-  it('should reject delimited session-duration-metric dimensions param', () => {
-    const { error } = paramsSchema.validate({ id: 'avgSessionDuration:day,action' })
-    expect(error).to.have.property('message', '"dimensions[1]" must be one of [day, hostname]')
   })
 
   it('should validate delimited dimensions param with transposeAndAggregate option', () => {
-    const { error, value } = paramsSchema.validate({ id: 'pageViews:day,userType~transposeAndAggregate' })
+    const {
+      configStub,
+      metricSpy,
+      dimensionsSpy,
+      timeSpy
+    } = makeStubSpies()
+    const { paramsSchema } = proxyquire(modulePath, configStub)
+    const { error, value } = paramsSchema.validate({ id: 'views:day,userType~transposeAndAggregate' })
     expect(error).to.be.an('undefined')
+    expect(metricSpy).to.have.property('calledOnce', true)
+    expect(timeSpy).to.have.property('calledOnce', true)
+    expect(dimensionsSpy).to.have.property('calledOnce', true)
+    expect(value).to.have.property('metric', 'views')
     expect(value).to.have.property('dimensions')
     expect(value.dimensions).to.deep.equal(['day', 'userType'])
-    expect(value.timeDimension).to.equal('day')
-    expect(value.nonTimeDimensions).to.deep.equal(['userType'])
-    expect(value.transposeAndAggregate).to.equal(true)
-    expect(value).to.have.property('metric', 'pageViews')
+    expect(value).to.have.property('transposeAndAggregate', true)
   })
 
-  it('should reject single dimensions param with transposeAndAggregate option', () => {
-    const { error } = paramsSchema.validate({ id: 'pageViews:day~transposeAndAggregate' })
-    expect(error).to.have.property('message', 'Must have exactly two dimensions to transpose and aggregate')
+  it('should validate where param', () => {
+    const {
+      configStub,
+      metricSpy,
+      timeSpy,
+      whereSpy
+    } = makeStubSpies()
+    const { paramsSchema } = proxyquire(modulePath, configStub)
+    const { error, value } = paramsSchema.validate({ id: 'views', where: 'foo=\'bar\'' })
+    expect(error).to.be.an('undefined')
+    expect(metricSpy).to.have.property('calledOnce', true)
+    expect(timeSpy).to.have.property('calledOnce', true)
+    expect(whereSpy).to.have.property('calledOnce', true)
+    expect(value).to.have.property('metric', 'views')
+    expect(value).to.have.property('where', 'foo=\'bar\'')
+  })
+
+  it('should validate time param', () => {
+    const {
+      configStub,
+      metricSpy,
+      timeSpy
+    } = makeStubSpies()
+    const { paramsSchema } = proxyquire(modulePath, configStub)
+    const { error, value } = paramsSchema.validate({ id: 'views', time: 'foo,bar' })
+    expect(error).to.be.an('undefined')
+    expect(metricSpy).to.have.property('calledOnce', true)
+    expect(timeSpy).to.have.property('calledOnce', true)
+    expect(value).to.have.property('metric', 'views')
+    expect(value).to.have.property('retVal', 'foo,bar')
   })
 })
