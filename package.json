@@ -1,6 +1,6 @@
 {
   "name": "@koopjs/provider-redshift-analytics",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A provider for supplying Redshift sourced analytics",
   "main": "src/index.js",
   "scripts": {
