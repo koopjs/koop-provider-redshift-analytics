@@ -55,6 +55,8 @@ The provider requires some configuration settings.  The code block below shows a
 | defaultTimeRangeStart.interval| string | A database time interval (e.g., day, month, year). | 30 |
 | defaultTimeRangeStart.count| integer | The number of time intervals before the present to set the start of the time range. | 30 |
 | eventLookup | object | Non-session metrics will likely be related to specific "event types" such as page-views, downloads, etc. The eventLookup translates the metric name (e.g., `pageViews`) to the actual event-type value (e.g. `page_view`)| |
+| dimensionLookup | object | A map for application values for dimensions that are stored in columns with non-matched column names.  Example: telemetry data for `timeElapsed` is stored in column named `metric1`. Use this object to map queries for `userType` to column `dimension1`.| `{ "userType": "dimension1" }`|
+| metricLookup | object | A map for application values for metrics that are stored in columns with non-matched column names.  Example: telemetry data for `timeElapsed` is stored in column named `metric1`. Use this object to map queries for `timeElapsed` to column `metric1`.| `{ "timeElapsed": "metric1" }`|
 
 ## Usage
 

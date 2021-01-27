@@ -10,6 +10,12 @@
     },
     "eventLookup": {
       "pageViews": "pageView"
+    },
+    "dimensionLookup": {
+      "itemId": "dimension1"
+    },
+    "metricLookup": {
+      "timeElapsed": "metric3"
     }
   }
 }
